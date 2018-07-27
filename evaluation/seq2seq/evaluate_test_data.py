@@ -1,7 +1,12 @@
 import sys
 import os
+from pathlib import Path
 
-sys.path.append('../..')  # ugly dirtyfix for imports to work
+dirname = os.path.dirname(os.path.abspath(__file__))
+p = Path(dirname)
+twolevelsup = str(p.parent.parent)
+if twolevelsup not in sys.path:
+    sys.path.append(twolevelsup)  # ugly dirtyfix for imports to work
 
 from models.seq2seq.decoder import *
 from models.seq2seq.encoder import *
@@ -34,7 +39,7 @@ if __name__ == '__main__':
         else:
             log_message("Not setting specific GPU")
 
-    relative_path = "../../data/cnn_pickled/cnn_pointer_50k"
+    relative_path = "../data/cnn_pickled/cnn_pointer_50k"
     # relative_path = "../../data/ntb_pickled/ntb_pointer_30k"
     hidden_size = 128
     embedding_size = 100
@@ -42,11 +47,12 @@ if __name__ == '__main__':
     dropout_p = 0.0
     # load_file = "../../models/GAN_trained_models/epoch3_cnn_generator_rougetest_1.pth.tar"
     # load_file = "../../models/pretrained_models/after_gan/epoch1_cnn_generator_unk_fix_rl_metricl.pth.tar"
-    load_file = "../../models/pretrained_models/after_gan/epoch1_cnn_generator_GAN_test.pth.tar"
+    #load_file = "models/pretrained_models/after_gan/epoch1_cnn_generator_GAN_test.pth.tar"
     # load_file = "../../models/pretrained_models/after_gan/ntb_generator_test_save_2.tar"
+    # HB
+    load_file = "models/pretrained_models/cnn/epoch13_cnn_test1.pth.tar"
 
     summary_pairs, vocabulary = load_dataset(relative_path)
-
     encoder = EncoderRNN(vocabulary.n_words, embedding_size, hidden_size, n_layers=n_layers)
 
     max_article_length = max(len(pair.article_tokens) for pair in summary_pairs) + 1
@@ -60,7 +66,7 @@ if __name__ == '__main__':
         encoder.load_state_dict(model_state_encoder)
         decoder.load_state_dict(model_state_decoder)
     except FileNotFoundError as e:
-        log_error_message("No file found: exiting")
+        log_error_message("No file found: exiting " + str(e))
         exit()
 
     log_message("Done loading the model")

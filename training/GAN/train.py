@@ -109,6 +109,7 @@ def train_GAN(config, generator, discriminator, training_pairs, eval_pairs, max_
                 print_total_rouge_reward += rouge_reward
                 # calculate number of batches processed
                 itr_generator += 1
+                # HB
                 if itr_generator % print_every == 0:
                     print_loss_avg = print_loss_generator / print_every
                     print_loss_avg_mle = print_loss_mle / print_every
@@ -146,6 +147,10 @@ def train_GAN(config, generator, discriminator, training_pairs, eval_pairs, max_
                                 'reward': print_total_reward_avg, 'baseline': print_avg_baseline,
                                 'adjusted_reward': print_adjusted_reward_avg, 'disc_loss': print_disc_loss_avg,
                                 'gan_reward': print_gan_reward_avg, 'rouge_reward': print_rouge_reward_avg}
+                    #print('itr: ', type(itr_generator))
+                    #print('itr: ', itr_generator)
+                    #print(type(log_dict))
+                    #print(log_dict)
                     writer.add_scalars('Logging', log_dict, itr_generator)
                     if print_loss_avg < lowest_loss_generator:
                         lowest_loss_generator = print_loss_avg

@@ -8,7 +8,12 @@ from torch import optim
 
 from tensorboardX import SummaryWriter
 
-sys.path.append('../..')  # ugly dirtyfix for imports to work
+from pathlib import Path
+dirname = os.path.dirname(os.path.abspath(__file__))
+p = Path(dirname)
+twolevelsup = str(p.parent.parent)
+if twolevelsup not in sys.path:
+    sys.path.append(twolevelsup)  # ugly dirtyfix for imports to work
 
 from models.GAN.discriminator import RougeDiscriminator, GANDiscriminator, JointRougeAndGANDiscriminator
 from models.GAN.generator_rl_strat import GeneratorRlStrat
@@ -48,7 +53,10 @@ if __name__ == '__main__':
         config = json.load(config_file)
 
     config['experiment_path'] = experiment_path
-    log_file = config['log']['filename']
+    # havard folderfix
+    prefix_list = sys.path[0].split('/')
+    prefixx = prefix_list[-2] + '/' + prefix_list[-1] + '/'
+    log_file = prefixx + config['log']['filename']
     init_logger(log_file)
 
     if use_cuda:
@@ -69,7 +77,7 @@ if __name__ == '__main__':
     log_message(json.dumps(config, indent=2))
 
     # load shared parameters
-    writer = SummaryWriter(config['tensorboard']['log_path'])
+    writer = SummaryWriter('/'.join(config['tensorboard']['log_path'].split('/')[2:]))
     relative_path = config['train']['dataset']
     num_articles = config['train']['num_articles']
     num_evaluate = config['train']['num_evaluate']
@@ -90,7 +98,7 @@ if __name__ == '__main__':
     generator_n_layers = config['generator_model']['n_layers']
     generator_dropout_p = config['generator_model']['dropout_p']
     generator_load_model = config['generator_model']['load']
-    generator_load_file = config['generator_model']['load_file']
+    generator_load_file = '/'.join(config['generator_model']['load_file'].split('/')[2:])
 
     # load discriminator parameters
     discriminator_hidden_size = config['discriminator_model']['hidden_size']
@@ -98,13 +106,13 @@ if __name__ == '__main__':
     discriminator_num_kernels = config['discriminator_model']['num_kernels']
     discriminator_kernel_sizes = config['discriminator_model']['kernel_sizes']
     discriminator_load_model = config['discriminator_model']['load']
-    discriminator_load_file = config['discriminator_model']['load_file']
+    discriminator_load_file = '/'.join(config['discriminator_model']['load_file'].split('/')[2:])
 
     generator_learning_rate = config['train']['generator_learning_rate']
     discriminator_learning_rate = config['train']['discriminator_learning_rate']
 
     log_message("Loading dataset")
-    summary_pairs, vocabulary = load_dataset(relative_path)
+    summary_pairs, vocabulary = load_dataset('/'.join(relative_path.split('/')[1:]))
     log_message("Done loading dataset")
 
     n_generator = config['train']['n_generator']
@@ -200,11 +208,11 @@ if __name__ == '__main__':
     # discriminator = GANDiscriminator(vocabulary, discriminator_model, discriminator_optimizer, discriminator_criterion)
 
     # ROUGE discriminator
-    discriminator = RougeDiscriminator(vocabulary)
+    #discriminator = RougeDiscriminator(vocabulary)
 
     # Joint discriminator
-    # discriminator = JointRougeAndGANDiscriminator(vocabulary, discriminator_model, discriminator_optimizer,
-    #                                               discriminator_criterion, phi)
+    discriminator = JointRougeAndGANDiscriminator(vocabulary, discriminator_model, discriminator_optimizer,
+                                                  discriminator_criterion, phi)
 
     log_message("Done loading models")
 

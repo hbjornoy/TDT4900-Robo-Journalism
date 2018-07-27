@@ -1,7 +1,17 @@
+"""
+This is calculates precision, recall, but messy with 
+alot of different datasets.
+"""
+
 import sys
 import os
 
-sys.path.append('../..')  # ugly dirtyfix for imports to work
+from pathlib import Path
+dirname = os.path.dirname(os.path.abspath(__file__))
+p = Path(dirname)
+twolevelsup = str(p.parent.parent)
+if twolevelsup not in sys.path:
+    sys.path.append(twolevelsup)  # ugly dirtyfix for imports to work
 
 from models.classifier.cnn_classifier import CNNDiscriminator
 from preprocess.preprocess_pointer import *
@@ -71,32 +81,38 @@ def evaluate_batch(sequences, model):
 def evaluate_on_dataset(dataset_path, batch_size, model, vocabulary):
     print("Loading dataset", flush=True)
     fake_abstracts = open(dataset_path + '.abstract.txt', encoding='utf-8').read().strip().split('\n')
+    print('prelength: ', len(fake_abstracts))
     fake_abstracts = fake_abstracts[0:max_abstracts]
+    print('postlength: ', len(fake_abstracts))
     print("Evaluating", flush=True)
     evaluate_all_data(fake_abstracts, batch_size, model, vocabulary)
 
 
 if __name__ == '__main__':
-    cuda_device = 1
+    cuda_device = int(sys.argv[1])
     torch.cuda.set_device(cuda_device)
 
     max_abstracts = 1000
     batch_size = 50
-    vocabulary_path = '../../data/cnn_pickled/cnn_pointer_50k'
+    vocabulary_path = '../data/cnn_pickled/cnn_pointer_50k'
 
-    dataset_path_real = '../../data/cnn_real_data/cnn_real_1'
-    dataset_path_fake = '../../data/cnn_fake_data/cnn_13epoch'
-    dataset_path_sampled = '../../data/cnn_fake_data/cnn_13epoch_sampled'
-    dataset_path_sampled2 = '../../data/cnn_fake_data/sampled_test1'
-    dataset_path_random = '../../data/cnn_fake_data/random1'
+    dataset_path_real = '../data/cnn_real_data/cnn_real_1'
+    dataset_path_fake = '../data/cnn_fake_data/cnn_13epoch'
+    dataset_path_sampled = '../data/cnn_fake_data/mediocre_samples'
+    dataset_path_sampled2 = '../data/cnn_fake_data/sampled_test1'
+    dataset_path_random = '../data/cnn_fake_data/random1'
 
     print("Loading model and vocabulary", flush=True)
     _, vocabulary = load_dataset(vocabulary_path)
 
     # discriminator_load_file = '../../models/pretrained_models/classifier/cnn/cnn_classifier_13epoch.tar'
     # discriminator_load_file = '../../models/pretrained_models/classifier/cnn/cnn_classifier_13epoch_combined.tar'
-    discriminator_load_file = '../../models/pretrained_models/classifier/cnn/epoch10_cnn_classifier_2class_test_4.tar'
-
+    # discriminator_load_file = 'models/pretrained_models/classifier/cnn/epoch10_cnn_classifier_2class_test_4.tar'
+    #discriminator_load_file = 'models/pretrained_models/classifier/cnn/epoch10_dataset_num100_cnn_classifier_sampled_folder_test5.tar'
+    # discriminator_load_file = 'models/pretrained_models/classifier/cnn/mediocre_epoch20_dataset_num100_cnn_classifier_sampled_folder_test5.tar'
+    # discriminator_load_file = 'models/pretrained_models/classifier/cnn/mediocre_epoch500_dataset_num100_cnn_classifier_sampled_folder_test5.tar'
+    discriminator_load_file = 'training/classifier/experiments/hb_cnn_test_1/epoch20_dataset_num100_cnn_classifier_sampled_folder_test5.tar'
+    
     model = load_pretrained_classifier(vocabulary, discriminator_load_file)
     model.eval()
     model.cuda()
@@ -110,12 +126,12 @@ if __name__ == '__main__':
     evaluate_on_dataset(dataset_path_real, batch_size, model, vocabulary)
 
     print("Fake:", flush=True)
-    evaluate_on_dataset(dataset_path_fake, batch_size, model, vocabulary)
+    #evaluate_on_dataset(dataset_path_fake, batch_size, model, vocabulary)
 
-    print("Sampled 1:", flush=True)
+    print("Mediocre generator:", flush=True)
     evaluate_on_dataset(dataset_path_sampled, batch_size, model, vocabulary)
 
-    print("Sampled 2:", flush=True)
+    print("Crappy generator 0.001:", flush=True)
     evaluate_on_dataset(dataset_path_sampled2, batch_size, model, vocabulary)
 
     print("Done", flush=True)

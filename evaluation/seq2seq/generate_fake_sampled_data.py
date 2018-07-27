@@ -3,7 +3,12 @@ import os
 
 from torch.distributions import Categorical
 
-sys.path.append('../..')  # ugly dirtyfix for imports to work
+from pathlib import Path
+dirname = os.path.dirname(os.path.abspath(__file__))
+p = Path(dirname)
+twolevelsup = str(p.parent.parent)
+if twolevelsup not in sys.path:
+    sys.path.append(twolevelsup)  # ugly dirtyfix for imports to work
 
 from models.seq2seq.decoder import PointerGeneratorDecoder
 from models.seq2seq.encoder import EncoderRNN
@@ -122,7 +127,7 @@ if __name__ == '__main__':
 
     # load dataset and vocabulary
     print("Loading dataset and vocabulary", flush=True)
-    relative_path = "../../data/cnn_pickled/cnn_pointer_50k"
+    relative_path = "../data/cnn_pickled/cnn_pointer_50k"
     summary_pairs, vocabulary = load_dataset(relative_path)
 
     max_article_length = max(len(pair.article_tokens) for pair in summary_pairs) + 1
@@ -140,7 +145,7 @@ if __name__ == '__main__':
 
     # load saved models
     print("Loading models", flush=True)
-    load_file = "../../models/pretrained_models/cnn/epoch13_cnn_test1.pth.tar"
+    load_file = "models/pretrained_models/cnn/epoch13_cnn_test1.pth.tar"
     try:
         model_state_encoder, model_state_decoder = load_state(load_file)
         encoder.load_state_dict(model_state_encoder)
@@ -175,6 +180,17 @@ if __name__ == '__main__':
 
     sample_pairs = summary_pairs[:generate_articles_length]
 
+    # HB: reducing size of datasets for testing
+    import math
+    if len(sys.argv) > 2:
+        keep_ratio = float(sys.argv[2])
+        sample_pairs = sample_pairs[0:math.ceil(len(sample_pairs)*keep_ratio)]
+        validation_pairs = math.ceil(validation_pairs*keep_ratio)
+        sample_pairs = sample_pairs[0:len(sample_pairs) - len(sample_pairs) % batch_size]
+
+        print('sample_pairs:', len(sample_pairs))   
+        print('validation_pairs:', validation_pairs)
+
     # run sampling
     generate_samples = True
     if generate_samples:
@@ -184,7 +200,7 @@ if __name__ == '__main__':
         # write to file
         print("Writing to file", flush=True)
         sampled_num = 1
-        sampled_data_save_file = "../../data/cnn_sampled_data/generated_samples_%d.abstract.txt" % sampled_num
+        sampled_data_save_file = "../data/cnn_sampled_data/generated_samples_%d.abstract.txt" % sampled_num
         with open(sampled_data_save_file, 'w') as file:
             for sample in generated_samples:
                 file.write(sample)
@@ -202,7 +218,7 @@ if __name__ == '__main__':
         # write validation data to file
         validation_sampled_num = 1
         validation_sampled_data_save_file \
-            = "../../data/cnn_validation_sampled_data/generated_validation_samples_%d.abstract.txt" \
+            = "../data/cnn_validation_sampled_data/generated_validation_samples_%d.abstract.txt" \
               % validation_sampled_num
         with open(validation_sampled_data_save_file, 'w') as file:
             for sample in generated_validation_samples:

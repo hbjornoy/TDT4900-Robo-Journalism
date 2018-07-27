@@ -4,7 +4,7 @@ from utils.data_prep import *
 from utils.logger import *
 
 
-def evaluate(config, test_articles, vocabulary, encoder, decoder, max_length, print_status=False):
+def evaluate(config, test_articles, vocabulary, encoder, decoder, max_length, logger=False, print_status=False):
     print_every = 100
     for i in range(len(test_articles)):
         if print_status:
@@ -18,16 +18,25 @@ def evaluate(config, test_articles, vocabulary, encoder, decoder, max_length, pr
 
         full_input_sentence_unpacked = get_sentence_from_tokens(full_input_sentence, vocabulary, extended_vocab)
         full_target_sentence_unpacked = get_sentence_from_tokens(full_target_sentence, vocabulary, extended_vocab)
-
-        log_message('> %s' % full_input_sentence_unpacked)
-        log_message('= %s' % full_target_sentence_unpacked)
+        
+        if logger is False:
+            log_message('> %s' % full_input_sentence_unpacked)
+            log_message('= %s' % full_target_sentence_unpacked)
+        else:
+            logger.info('> %s' % full_input_sentence_unpacked)
+            logger.info('= %s' % full_target_sentence_unpacked)
         output_beams = evaluate_beams(config, vocabulary, encoder, decoder, input_sentence, full_input_sentence,
                                       max_length, extended_vocab)
         for beam in output_beams:
             output_words = beam.decoded_word_sequence
             output_sentence = ' '.join(output_words)
-            log_message('< %s %s' % (str(beam.get_avg_score()), output_sentence))
-            log_message('')
+            
+            if logger is False:
+                log_message('< %s %s' % (str(beam.get_avg_score()), output_sentence))
+                log_message('')
+            else:
+                logger.info('< %s %s' % (str(beam.get_avg_score()), output_sentence))
+                logger.info('')
 
 
 def evaluate_argmax(vocabulary, test_articles, encoder, decoder, max_length):
@@ -63,7 +72,7 @@ def evaluate_rouge(test_articles, encoder, decoder, max_article_length,
         mean_reward = reward_batch.mean()
         total_reward += mean_reward
     mean_total_reward = total_reward / len(batches)
-    return mean_total_reward.data[0]
+    return mean_total_reward.item()
 
 
 # Change name to something more general? Since it uses discriminator
@@ -90,6 +99,21 @@ def get_argmax_rouge_reward(encoder, decoder, max_abstract_length, input_variabl
                 ni[token_index][0] = UNK_token
         decoder_input = Variable(ni)
 
+    # HB debugging
+    """
+    import numpy as np
+    print('acc_sent: ', type(accumulated_sequence))
+    print('full_target: ', type(full_target_var_2))
+    print('extended_vocab: ', type(extended_vocabs))
+    reward = discriminator.evaluate(accumulated_sequence, full_target_var_2, extended_vocabs)
+    print('type: ', type(reward))
+    print('type: ', type(reward[0]))
+    #print('tens1: ', reward[0])
+    #reward = torch.tensor(reward)
+    reward = list(reward)
+    print('type: ', type(reward))
+    print('attempt at mean: ', np.mean(reward))
+    """
     reward = discriminator.evaluate(accumulated_sequence, full_target_var_2, extended_vocabs)
     return reward
 
@@ -181,6 +205,7 @@ def calculate_loss_on_eval_set(config, vocabulary, encoder, decoder, criterion, 
         loss += calculate_loss_on_single_eval_article(config, vocabulary, encoder, decoder, criterion, input_variable,
                                                       full_target_variable, input_length, full_article_variable)
     loss_avg = loss / len(eval_pairs)
+    print('loss avg:', loss_avg)
     writer.add_scalar('Evaluation_loss', loss_avg, epoch)
     message = "Evaluation set loss for epoch %d: %.4f" % (epoch, loss_avg)
     if use_logger:
@@ -215,4 +240,4 @@ def calculate_loss_on_single_eval_article(config, vocabulary, encoder, decoder, 
         log_output = torch.log(decoder_output.clamp(min=1e-8))
         loss += criterion(log_output, full_target_variable[di])
 
-    return loss.data[0]
+    return loss.data.item()

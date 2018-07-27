@@ -5,7 +5,12 @@ import os
 import torch
 from tensorboardX import SummaryWriter
 
-sys.path.append('../..')  # ugly dirtyfix for imports to work
+from pathlib import Path
+dirname = os.path.dirname(os.path.abspath(__file__))
+p = Path(dirname)
+twolevelsup = str(p.parent.parent)
+if twolevelsup not in sys.path:
+    sys.path.append(twolevelsup)  # ugly dirtyfix for imports to work
 
 from models.classifier.cnn_classifier import CNNDiscriminator
 from training.classifier.train import *
@@ -47,7 +52,7 @@ if __name__ == '__main__':
     config['experiment_path'] = experiment_path
     print(json.dumps(config, indent=2), flush=True)
 
-    writer = SummaryWriter(config['tensorboard']['log_path'])
+    writer = SummaryWriter('/'.join(config['tensorboard']['log_path'].split('/')[2:]))
 
     relative_path = config['train']['real_data_file']
     num_articles = config['train']['num_articles']
@@ -64,9 +69,9 @@ if __name__ == '__main__':
     print("Using cuda: " + str(use_cuda), flush=True)
 
     vocabulary_path = config['train']['vocabulary_path']
-    _, vocabulary = load_dataset(vocabulary_path)
+    _, vocabulary = load_dataset('/'.join(vocabulary_path.split('/')[1:]))
 
-    real_data = open(relative_path + '.abstract.txt', encoding='utf-8').read().strip().split('\n')
+    real_data = open('/'.join(relative_path.split('/')[1:]) + '.abstract.txt', encoding='utf-8').read().strip().split('\n')
 
     # Add EOS to real dataset (can probably do this in the files later instead
     # TODO: Fix in file
@@ -80,6 +85,7 @@ if __name__ == '__main__':
 
     real_training_data = real_data[:train_length]
     real_validation_data = real_data[train_length:]
+    
 
     # TODO: Remove 620 , make it train_length instead ?
     max_train_examples = train_length
@@ -87,7 +93,7 @@ if __name__ == '__main__':
 
     # TODO: Load validation data from validation folder
     validation_directory = config['train']['validation_data_directory']
-    current_file = list(read_directory(validation_directory))[0]
+    current_file = list(read_directory('/'.join(validation_directory.split('/')[1:])))[0]
     fake_validation_data = open(current_file, encoding='utf-8').read().strip().split('\n')
 
     all_validation_data = real_validation_data + fake_validation_data

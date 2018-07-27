@@ -33,10 +33,10 @@ class NewBatch(BaseSendObj):
 class GeneratorSeqGanStratParallel(GeneratorBase):
     def __init__(self, vocabulary, encoder, decoder, encoder_optimizer, decoder_optimizer, mle_criterion,
                  batch_size, use_cuda, beta, num_monte_carlo_samples, sample_rate, negative_reward, use_trigram_check,
-                 use_running_avg_baseline):
+                 use_running_avg_baseline, discriminator_batch_size):
         GeneratorBase.__init__(self, vocabulary, encoder, decoder, encoder_optimizer, decoder_optimizer, mle_criterion,
                  batch_size, use_cuda, beta, num_monte_carlo_samples, sample_rate, negative_reward, use_trigram_check,
-                 use_running_avg_baseline)
+                 use_running_avg_baseline, discriminator_batch_size)
 
     # discriminator is used to calculate reward
     # target batch is used for MLE

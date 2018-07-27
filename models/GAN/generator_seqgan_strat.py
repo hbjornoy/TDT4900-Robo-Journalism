@@ -36,7 +36,7 @@ class GeneratorSeqGanStrat(GeneratorBase):
             baseline = self.get_argmax_baseline(encoder_hidden, encoder_outputs, max_target_length,
                                                 full_input_variable_batch, discriminator, full_target_variable_batch_2,
                                                 extended_vocabs)
-            print_baseline = baseline.sum(0) / self.batch_size
+            print_baseline = baseline.sum(0).item() / self.batch_size
 
         # MLE loss
         if self.beta < 1.00:
@@ -148,7 +148,7 @@ class GeneratorSeqGanStrat(GeneratorBase):
         if self.use_running_avg_baseline:
             # Calculate running average baseline
             baseline = self.cumulative_reward / self.updates
-            print_baseline = baseline.data[0]
+            print_baseline = baseline.item()
 
         policy_loss = 0
         total_print_reward = 0
@@ -193,23 +193,23 @@ class GeneratorSeqGanStrat(GeneratorBase):
         total_loss.backward()
 
         clip = 2
-        torch.nn.utils.clip_grad_norm(self.encoder.parameters(), clip)
-        torch.nn.utils.clip_grad_norm(self.decoder.parameters(), clip)
+        torch.nn.utils.clip_grad_norm_(self.encoder.parameters(), clip)
+        torch.nn.utils.clip_grad_norm_(self.decoder.parameters(), clip)
 
         self.encoder_optimizer.step()
         self.decoder_optimizer.step()
 
         timings[timings_var_backprop] += (time.time() - backprop_time_start)
 
-        total_print_reward_data = total_print_reward.data[0]
+        total_print_reward_data = total_print_reward.item()
 
         if self.beta < 1.00:
-            return total_loss.data[0], mle_loss.data[0], policy_loss.data[0], print_log_sum.data[0], \
-                   total_print_reward_data, print_baseline, total_print_adjusted_reward.data[0], \
+            return total_loss.item(), mle_loss.item(), policy_loss.item(), print_log_sum.item(), \
+                   total_print_reward_data, print_baseline, total_print_adjusted_reward.item(), \
                    total_print_reward_data, total_print_reward_data
         else:
-            return total_loss.data[0], total_loss.data[0], policy_loss.data[0], print_log_sum.data[0], \
-                   total_print_reward_data, print_baseline, total_print_adjusted_reward.data[0], \
+            return total_loss.item(), total_loss.item(), policy_loss.item(), print_log_sum.item(), \
+                   total_print_reward_data, print_baseline, total_print_adjusted_reward.item(), \
                    total_print_reward_data, total_print_reward_data
 
     def monte_carlo_expansion(self, action, decoder_hidden, encoder_outputs, full_input_variable_batch,

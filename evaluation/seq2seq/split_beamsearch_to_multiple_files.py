@@ -85,10 +85,10 @@ def split_beamsearch_to_multiple_files(path, path_to_reference, path_to_modelsum
     reference, hypothesis = read_file(path)
 
     if len(reference) < num_summaries:
-        print("Error - not enough references")
+        print("Error - not enough references, %d references and %d summaries" % (len(reference), num_summaries))
         exit()
     if len(hypothesis) < num_summaries:
-        print("Error - not enough hypotheses")
+        print("Error - not enough hypotheses, %d hypothesis and %d summaries" % (len(hypothesis), num_summaries))
         exit()
 
     reference = reference[:num_summaries]
@@ -96,6 +96,7 @@ def split_beamsearch_to_multiple_files(path, path_to_reference, path_to_modelsum
 
     if len(reference) != len(hypothesis):
         print("Error - not equal amount of references and hypotheses")
+        print("%d references and %d hypothesis" % (len(reference), len(hypothesis)))
         exit()
 
     for i in range(0, len(reference)):

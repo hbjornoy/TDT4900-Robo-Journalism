@@ -1,7 +1,7 @@
 import pickle
 import sys
 
-sys.path.append('../')  # ugly dirtyfix for imports to work
+sys.path.append(sys.path[0]+'/../')  # ugly dirtyfix for imports to work
 from utils.data_prep import split_category_and_article
 
 

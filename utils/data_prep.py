@@ -15,6 +15,10 @@ UNK_token = 3
 
 use_cuda = torch.cuda.is_available()
 
+def reduce_size_of_data(data):
+    subsample = data[0:100]
+    return subsample
+
 
 def pad_seq(seq, max_length):
     new_seq = seq.copy()
@@ -108,6 +112,8 @@ def get_word_from_token(token, vocabulary, extended_vocabulary):
                 next_unpacked_word = key
                 break
         return next_unpacked_word
+    if type(token) is torch.Tensor:
+        return vocabulary.index2word[token.item()]
     return vocabulary.index2word[token]
 
 
@@ -121,6 +127,8 @@ def get_sentence_from_tokens_unked(tokens, vocabulary):
 def get_word_from_token_unked(token, vocabulary):
     if token >= vocabulary.n_words:
         return "<UNK>"
+    if type(token) is torch.Tensor:
+        return vocabulary.index2word[token.item()]
     return vocabulary.index2word[token]
 
 

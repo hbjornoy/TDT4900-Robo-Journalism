@@ -19,7 +19,7 @@ def train(ground_truth, sequences, model, optimizer, criterion):
     loss = criterion(scores, ground_truth)
     loss.backward()
     optimizer.step()
-    return loss.data[0]
+    return loss.item()
 
 
 def read_directory(directory):
@@ -36,7 +36,7 @@ def train_iters(config, vocabulary, model, optimizer, writer, real_training_data
     n_epochs = config['train']['num_epochs']
     batch_size = config['train']['batch_size']
     print_every = config['log']['print_every']
-    directory = config['train']['fake_data_directory']
+    directory = '/'.join(config['train']['fake_data_directory'].split('/')[1:])
     save_after_dataset_num = config['save']['save_after_dataset_num']
 
     start = time.time()
@@ -44,7 +44,7 @@ def train_iters(config, vocabulary, model, optimizer, writer, real_training_data
 
     criterion = nn.BCEWithLogitsLoss()
 
-    num_batches = int(len(real_training_data) * 2 / batch_size)
+    num_batches = int(len(real_training_data)*2 / batch_size) # *2
 
     lowest_loss = 999
     total_runtime = 0.0
@@ -58,6 +58,7 @@ def train_iters(config, vocabulary, model, optimizer, writer, real_training_data
     files = list(read_directory(directory))
     random.shuffle(files)
     num_training_dataset = len(files)
+    print('num_training_dataset', num_training_dataset)
 
     n_iters = num_batches * n_epochs * num_training_dataset
 
@@ -86,6 +87,7 @@ def train_iters(config, vocabulary, model, optimizer, writer, real_training_data
             title_batches = list(chunks(titles_shuffled, batch_size))
 
             for batch in range(num_batches):
+                #print(batch, num_batches)
                 ground_truth_batched, sequences = batch_sequences(vocabulary, title_batches[batch],
                                                                   ground_truth_batches[batch])
                 loss = train(ground_truth_batched, sequences, model, optimizer, criterion)
@@ -115,11 +117,12 @@ def train_iters(config, vocabulary, model, optimizer, writer, real_training_data
             # evaluate(ground_truth_eval, validation_data, vocabulary, model, writer, batch_loss_avg, epoch)
             # model.train()
             # save each epoch after epoch 7 with different naming
-            if dataset_num >= save_after_dataset_num:
+            dataset_num = 100 #HB: just to test saving
+            if epoch % 10 == 0:
                 print("Saving model", flush=True)
                 save_state({
                     'model': model.state_dict()
-                }, "epoch%d_dataset_num%d_" % (epoch, dataset_num) + config['save']['save_file'])
+                }, config['experiment_path'] + "/epoch%d_dataset_num%d_" % (epoch, dataset_num) + config['save']['save_file'])
                 print("Model saved", flush=True)
 
         print("Done with training")
