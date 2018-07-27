@@ -4,7 +4,7 @@ from sumeval.metrics.rouge import RougeCalculator
 
 def read_file(path):
     text = open(path, encoding='utf-8').read()
-    # text = clean_logger_output(text)  # when using logger
+    text = clean_logger_output(text)  # when using logger
     titles = []
     output = []
     not_truth = False
@@ -18,6 +18,8 @@ def read_file(path):
         elif line.startswith('<') and not_truth:
             output.append(line[1:])
             not_truth = False
+        #else:
+        #    print(line)
 
     output = clean_modelsummary(output)
     titles = clean_reference(titles)
@@ -81,11 +83,14 @@ if __name__ == '__main__':
     # path = '../output_for_eval/cnn_beam_output_GAN_4.log'
     # path = '../output_for_eval/cnn_beam_output_rougetest_3.log'
     # path = '../output_for_eval/old_rouge/output_eval_rouge_argmax_trigram_metric_pretrained.txt'
-    path = '../output_for_eval/rl_strat_test_data/beam_output_rl_strat_mle_epoch4_test_data.txt'
+    # path = '../output_for_eval/rl_strat_test_data/beam_output_rl_strat_mle_epoch4_test_data.txt'
+    path = 'output_for_eval/seq2seq/cnn_beam_output_rougetest_3.log'
 
     print("Started extracting titles...")
+    #clean_logger_output
     reference, hypothesis = read_file(path)
     print(len(hypothesis))
+    print(len(reference))
 
     print("Done extracting titles...")
     print("starting to evaluate %d examples..." % len(reference))

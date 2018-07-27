@@ -39,7 +39,7 @@ class Beam:
     def generate_expanded_beams(self, vocabulary, topv, topi, decoder_hidden, decoder_attention, expansions=5):
         i = 0
         while i < expansions:
-            next_word = topi[0][i]
+            next_word = topi[0][i].item()
             if has_trigram(self.decoded_outputs, next_word):
                 expansions += 1
                 i += 1

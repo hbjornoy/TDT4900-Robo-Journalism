@@ -19,6 +19,7 @@
   },
   "model" : {
     "n_layers" : 1,
+    "embedding_size" : 100,
     "hidden_size" : 128,
     "dropout_p" : 0.1
   },
@@ -27,7 +28,9 @@
     "attention_path" : "attention/"
   },
   "log" : {
-    "print_every" : 1000
+    "print_every" : 1000,
+    "filename" : "experiments/ntb_pretrain/output.log"
+
   },
   "tensorboard" : {
     "log_path" : "../../log/seq2seq/ntb_pretrain"

@@ -59,13 +59,13 @@ def train(config, vocabulary, input_variable, full_input_variable, input_lengths
     loss.backward()
 
     clip = 2
-    torch.nn.utils.clip_grad_norm(encoder.parameters(), clip)
-    torch.nn.utils.clip_grad_norm(decoder.parameters(), clip)
+    torch.nn.utils.clip_grad_norm_(encoder.parameters(), clip)
+    torch.nn.utils.clip_grad_norm_(decoder.parameters(), clip)
 
     encoder_optimizer.step()
     decoder_optimizer.step()
 
-    return loss.data[0]
+    return loss.data.item()
 
 
 def train_iters(config, training_pairs, eval_pairs, vocabulary, encoder, decoder, max_article_length,

@@ -1,0 +1,29 @@
+{
+  "train" : {
+    "real_data_file" : "../../data/cnn_real_data/cnn_real_1",
+    "fake_data_directory" : "../../data/cnn_sampled_data/",
+    "validation_data_directory" : "../../data/cnn_validation_sampled_data/",
+    "vocabulary_path" : "../../data/cnn_pickled/cnn_pointer_50k",
+    "num_articles" : -1,
+    "num_evaluate" : 13000,
+    "num_epochs" : 500,
+    "batch_size" : 64,
+    "learning_rate" : 0.0001
+  },
+  "model" : {
+    "hidden_size" : 128,
+    "dropout_p" : 0.5,
+    "num_kernels" : 100,
+    "kernel_sizes" : [3, 4, 5]
+  },
+  "save" : {
+    "save_file" : "cnn_classifier_sampled_folder_test5.tar",
+    "save_after_dataset_num": 10
+  },
+  "log" : {
+    "print_every" : 1000
+  },
+  "tensorboard" : {
+    "log_path" : "../../log/classifier/hb_cnn_test_1"
+  }
+}

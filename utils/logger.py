@@ -72,6 +72,25 @@ decode_breakings[decode_breaking_baseline] = 0
 decode_breakings[decode_breaking_policy] = 0
 decode_breakings[decode_breaking_fake_sampling] = 0
 
+# HB
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+def setup_logger(name, log_file, level=logging.INFO):
+    """Function setup as many loggers as you want"""
+
+    handler = logging.FileHandler(log_file)        
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger
+
+
+
+
+
 
 def init_logger(filename):
     # create logger

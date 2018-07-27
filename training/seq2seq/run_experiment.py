@@ -8,7 +8,12 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 from torch import optim
 from tensorboardX import SummaryWriter
 
-sys.path.append('../..')  # ugly dirtyfix for imports to work
+from pathlib import Path
+dirname = os.path.dirname(os.path.abspath(__file__))
+p = Path(dirname)
+twolevelsup = str(p.parent.parent)
+if twolevelsup not in sys.path:
+    sys.path.append(twolevelsup)  # ugly dirtyfix for imports to work  # ugly dirtyfix for imports to work
 
 from evaluation.seq2seq.evaluate import evaluate
 from models.seq2seq.decoder import AttnDecoderRNN, PointerGeneratorDecoder
@@ -16,7 +21,6 @@ from models.seq2seq.encoder import EncoderRNN
 from preprocess.preprocess_pointer import *
 from training.seq2seq.train import train_iters
 from utils.logger import *
-
 
 def load_state(filename):
     if os.path.isfile(filename):
@@ -36,12 +40,16 @@ if __name__ == '__main__':
         config = json.load(config_file)
 
     config['experiment_path'] = experiment_path
-    filename = config['log']['filename']
+    # havard folderfix
+    prefix_list = sys.path[0].split('/')
+    prefixx = prefix_list[-2] + '/' + prefix_list[-1] + '/'
+    filename = prefixx + config['log']['filename']
     init_logger(filename)
 
     use_cuda = torch.cuda.is_available()
 
     if use_cuda:
+        print('cuda is available')
         if len(sys.argv) < 3:
             log_error_message("Expected 2 arguments: [0] = experiment path (e.g. test_experiment1), [1] = GPU (0 or 1)")
             exit()
@@ -54,7 +62,11 @@ if __name__ == '__main__':
 
     log_message(json.dumps(config, indent=2))
 
-    writer = SummaryWriter(config['tensorboard']['log_path'])
+    #tb_path = '/'.join(config['tensorboard']['log_path'].split('/')[2:])
+    #print('working file: ', os.getcwd())
+    #print('filewriter path: ', config['tensorboard']['log_path'])
+    #print('tb_path: ', tb_path)
+    writer = SummaryWriter('/'.join(config['tensorboard']['log_path'].split('/')[2:]))
     relative_path = config['train']['dataset']
     num_articles = config['train']['num_articles']
     num_evaluate = config['train']['num_evaluate']
@@ -64,14 +76,13 @@ if __name__ == '__main__':
     learning_rate = config['train']['learning_rate']
 
     embedding_size = config['model']['embedding_size']
-    hidden_size = config['model']['hidden_size']
+    hidden_size = config['model']['hidden_size']    
     n_layers = config['model']['n_layers']
     dropout_p = config['model']['dropout_p']
 
     load_model = config['train']['load']
     load_file = experiment_path + "/" + config['train']['load_file']
-
-    summary_pairs, vocabulary = load_dataset(relative_path)
+    summary_pairs, vocabulary = load_dataset('/'.join(relative_path.split('/')[1:]))
 
     if num_articles != -1:
         summary_pairs = summary_pairs[:num_articles]
@@ -94,6 +105,15 @@ if __name__ == '__main__':
     test_articles = summary_pairs[train_length:train_length + test_length]
 
     log_message("Range test: %d - %d" % (train_length, train_length+test_length))
+
+    # HB: reducing size of datasets for testing
+    import math
+    if len(sys.argv) > 3:
+        keep_ratio = float(sys.argv[3])
+        train_articles = train_articles[0:math.ceil(len(train_articles)*keep_ratio)]
+        test_articles = test_articles[0:math.ceil(len(test_articles)*keep_ratio)]
+        print('train_articles:', len(train_articles))   
+        print('test_articles:', len(test_articles))
 
     encoder = EncoderRNN(vocabulary.n_words, embedding_size, hidden_size, n_layers=n_layers)
 
@@ -129,6 +149,7 @@ if __name__ == '__main__':
     if load_model:
         encoder_optimizer.load_state_dict(optimizer_state_encoder)
         decoder_optimizer.load_state_dict(optimizer_state_decoder)
+
 
     train_iters(config, train_articles, test_articles, vocabulary,
                 encoder, decoder, max_article_length, max_abstract_length, encoder_optimizer, decoder_optimizer,

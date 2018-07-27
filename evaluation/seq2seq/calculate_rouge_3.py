@@ -1,16 +1,18 @@
-import time
+
 from pyrouge import Rouge155
 
 
 def calculate_rouge_3(path_to_reference, path_to_modelsummary):
-    r = Rouge155()
+    r = Rouge155() #'C://RELEASE-1.5.5'  '/home/bjornoy/anaconda3/lib/python3.6/site-packages/pyrouge'
     r.system_dir = path_to_reference
     r.model_dir = path_to_modelsummary
     r.system_filename_pattern = '(\d+)_reference.txt'
     r.model_filename_pattern = '#ID#_modelsummary.txt'
     print("Starting to convert and evaluate")
     output = r.convert_and_evaluate()  # tar Lang tid
-    return output
+    print(output)
+    output_dict = r.output_to_dict(output)
+    return output_dict
 
 
 if __name__ == '__main__':
