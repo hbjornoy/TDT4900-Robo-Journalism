@@ -149,7 +149,7 @@ class GeneratorSeqGanStrat(GeneratorBase):
             # Calculate running average baseline
             baseline = self.cumulative_reward / self.updates
             print_baseline = baseline.item()
-
+            
         policy_loss = 0
         total_print_reward = 0
         total_print_adjusted_reward = 0

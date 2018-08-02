@@ -162,6 +162,7 @@ if __name__ == '__main__':
             log_error_message("No generator model file found: exiting")
             exit()
 
+    # vocabulary.n_words + 1 because of extra UNK symbol
     discriminator_model = CNNDiscriminator(vocabulary.n_words, discriminator_hidden_size, discriminator_num_kernels,
                                            discriminator_kernel_sizes, discriminator_dropout_p)
 
@@ -189,20 +190,20 @@ if __name__ == '__main__':
                                                weight_decay=1e-05)
     discriminator_criterion = torch.nn.BCEWithLogitsLoss()
 
-    # generator = GeneratorRlStrat(vocabulary, generator_encoder, generator_decoder, generator_encoder_optimizer,
-    #                              generator_decoder_optimizer, generator_mle_criterion, batch_size,
-    #                              use_cuda, beta, num_monte_carlo_samples, sample_rate, allow_negative_reward,
-    #                              use_trigram_check, use_running_avg_baseline, discriminator_batch_size)
+    generator = GeneratorRlStrat(vocabulary, generator_encoder, generator_decoder, generator_encoder_optimizer,
+                                 generator_decoder_optimizer, generator_mle_criterion, batch_size,
+                                 use_cuda, beta, num_monte_carlo_samples, sample_rate, allow_negative_reward,
+                                 use_trigram_check, use_running_avg_baseline, discriminator_batch_size)
 
     # generator = GeneratorSuperStrat(vocabulary, generator_encoder, generator_decoder, generator_encoder_optimizer,
     #                                 generator_decoder_optimizer, generator_mle_criterion, batch_size,
     #                                 use_cuda, beta, num_monte_carlo_samples, sample_rate, allow_negative_reward,
     #                                 use_trigram_check, use_running_avg_baseline)
 
-    generator = GeneratorSeqGanStrat(vocabulary, generator_encoder, generator_decoder, generator_encoder_optimizer,
-                                     generator_decoder_optimizer, generator_mle_criterion, batch_size,
-                                     use_cuda, beta, num_monte_carlo_samples, sample_rate, allow_negative_reward,
-                                     use_trigram_check, use_running_avg_baseline, discriminator_batch_size)
+    #generator = GeneratorSeqGanStrat(vocabulary, generator_encoder, generator_decoder, generator_encoder_optimizer,
+    #                                 generator_decoder_optimizer, generator_mle_criterion, batch_size,
+    #                                 use_cuda, beta, num_monte_carlo_samples, sample_rate, allow_negative_reward,
+    #                                 use_trigram_check, use_running_avg_baseline, discriminator_batch_size)
 
     # GAN discriminator
     # discriminator = GANDiscriminator(vocabulary, discriminator_model, discriminator_optimizer, discriminator_criterion)

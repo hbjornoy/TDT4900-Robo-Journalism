@@ -22,7 +22,11 @@ class CNNDiscriminator(nn.Module):
         self.fc1 = nn.Linear(len(self.kernel_sizes) * self.num_kernels, 2)
 
     def forward(self, x):
-        x = self.embed(x)
+        # map words out of vocabulary to <UNK> with index 3 in vocabulary
+        mat_3 = torch.full_like(x, 3)
+        x = torch.where(x<50004, x, mat_3)
+
+        x = self.embed(x) 
         x = x.unsqueeze(1)
         x = [func.relu(conv(x)).squeeze(3) for conv in self.convs1]
         x = [func.max_pool1d(i, i.size(2)).squeeze(2) for i in x]

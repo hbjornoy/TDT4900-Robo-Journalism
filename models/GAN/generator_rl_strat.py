@@ -19,6 +19,7 @@ class GeneratorRlStrat(GeneratorBase):
     def train_on_batch(self, input_variable_batch, full_input_variable_batch, input_lengths, full_target_variable_batch,
                        target_lengths, discriminator, max_monte_carlo_length, target_variable, extended_vocabs,
                        full_target_variable_batch_2):
+        torch.cuda.empty_cache() # emty the gpu
 
         self.encoder_optimizer.zero_grad()
         self.decoder_optimizer.zero_grad()

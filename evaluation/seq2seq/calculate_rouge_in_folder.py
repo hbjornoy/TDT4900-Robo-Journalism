@@ -32,7 +32,7 @@ if __name__ == '__main__':
     path_to_reference = "output_for_eval/seq2seq/split_data/reference/"
     path_to_modelsummary = "output_for_eval/seq2seq/split_data/modelsummary/"
     #num_summaries = 2000
-    num_summaries = 10 # 1010
+    num_summaries = 1010
 
     # test set
     if test_data:

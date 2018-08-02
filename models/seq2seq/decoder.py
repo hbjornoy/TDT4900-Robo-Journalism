@@ -100,7 +100,6 @@ class PointerGeneratorDecoder(nn.Module):
 
         # in place scatter add
         token_input_dist.scatter_add_(1, full_input, attention_dist)
-
         p_final = self.right_padding((p_vocab * p_gen)) + (1 - p_gen) * token_input_dist
 
         return p_final, decoder_hidden, attention_dist
