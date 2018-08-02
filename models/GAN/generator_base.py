@@ -64,6 +64,7 @@ class GeneratorBase:
         decoder_input = decoder_input.cuda() if self.use_cuda else decoder_input
         decoder_hidden = encoder_hidden
         accumulated_sequence = None
+        
         for di in range(max_target_length):
             decoder_output, decoder_hidden, decoder_attention \
                 = self.decoder(decoder_input, decoder_hidden, encoder_outputs, full_input_variable_batch,
@@ -98,7 +99,7 @@ class GeneratorBase:
             ni = where(ni < self.UPPER_BOUND, ni, self.MASK)
             decoder_input = Variable(ni.unsqueeze(1))
             timings[timings_var_unk_check] += time.time() - unk_check_time_start
-
+        
         baseline, _, _ = discriminator.evaluate(accumulated_sequence, full_target_variable_batch_2, extended_vocabs)
         return baseline
 

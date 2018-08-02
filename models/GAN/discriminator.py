@@ -41,7 +41,7 @@ class GANDiscriminator:
         scores = Variable(scores.data.narrow(1, 0, 1)).squeeze()
         sigm = nn.functional.sigmoid(scores).data
         gan_reward = Variable(torch.cuda.FloatTensor(sigm))
-        return gan_reward, gan_reward, gan_reward
+        return gan_reward, gan_reward, gan_rewards
 
 
 class JointRougeAndGANDiscriminator:
@@ -59,28 +59,41 @@ class JointRougeAndGANDiscriminator:
         loss = self.criterion(scores, ground_truth)
         loss.backward()
         self.optimizer.step()
-        return loss.data[0]
+        return loss.item()
 
     # TODO: Probably don't need extended_vocabs anymore?
     # reference_batch and extended_vocabs are not used here, but included to make
     # the eval function general across discriminators
     def evaluate(self, sequences, reference_batch, extended_vocabs):
+
+        walla = sequences.cpu()
+        #print("ext_vocabs", extended_vocabs)
         gan_rewards = self.evaluate_gan(sequences)
+        # walla-debugging
+        walla = gan_rewards.cpu()
+        #print("walla3-dim1:", len(walla)) # batch-size
+        #print("walla3:", walla)
+
         rouge_reward = self.evaluate_rouge(sequences, reference_batch, extended_vocabs)
         joint_reward = self.phi * rouge_reward + (1 - self.phi) * gan_rewards
         return joint_reward, gan_rewards, rouge_reward
 
     def evaluate_gan(self, sequences):
+        #print('walla2.1')
         self.model.eval()
-        scores = self.model(sequences)
+        #print('walla2.2')
+        scores = self.model(sequences) # Danger-zone
+        #print('walla2.3')
         self.model.train()
         scores = Variable(scores.data.narrow(1, 0, 1)).squeeze()
-        sigm = nn.functional.sigmoid(scores).data
+        sigm = nn.functional.sigmoid(scores).data # item()?
         return Variable(torch.cuda.FloatTensor(sigm))
 
     def evaluate_rouge(self, generated_batch, reference_batch, extended_vocabs):
         before_transfer = time.time()
+        #print('walla3.1')
         generated_batch = generated_batch.cpu()
+        #print('walla3.2, generated batch', generated_batch)
         timings[timings_var_discriminator_transfer] += time.time() - before_transfer
         generated_batch, reference_batch = self.convert_batch(generated_batch, reference_batch)
         rouge_l_points = []

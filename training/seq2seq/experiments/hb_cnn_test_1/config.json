@@ -5,9 +5,9 @@
     "num_evaluate" : 13000,
     "throw" : 0,
     "with_categories": false,
-    "num_epochs" : 20,
+    "num_epochs" : 30,
     "batch_size" : 16,
-    "learning_rate" : 0.015,
+    "learning_rate" : 0.001,
     "teacher_forcing_ratio" : 1.0,
     "load" : false,
     "load_file" : "test1.pth.tar"

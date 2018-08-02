@@ -34,8 +34,7 @@ if __name__ == '__main__':
     models_directory = sys.argv[1]
     files = list(read_directory(models_directory))
     files.sort()
-    output_directory = "/home/bjornoy/TDT4900-Robo-Journalism/output_for_eval/seq2seq/cnn_models_first_eval/"
-
+    output_directory = twolevelsup + "/" + "/".join(models_directory.split("/")[0:-1]) + "/models_first_eval"
     print("Number of files to run: %d" % len(files), flush=True)
 
     for i in range(0, len(files)):
