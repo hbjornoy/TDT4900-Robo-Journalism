@@ -1,3 +1,5 @@
+.ipynb_checkpoints
+
 data/*
 .idea
 saved_models/*
@@ -6,3 +8,4 @@ saved_models/*
 *.txt
 *.log
 log/*
+
