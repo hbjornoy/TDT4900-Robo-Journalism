@@ -226,28 +226,28 @@ def train_GAN(config, generator, discriminator, training_pairs, eval_pairs, max_
                 save_state({
                     'model_state_encoder': generator.encoder.state_dict(),
                     'model_state_decoder': generator.decoder.state_dict(),
-                }, config['experiment_path'] + "/" + "/epoch%d_1quarter_" % epoch + config['save']['save_file_generator'])
+                }, config['experiment_path'] + "/" + "/epoch%d25quarter_" % epoch + config['save']['save_file_generator'])
             # save on half epoch
             if batch == int(num_batches / 2):
                 log_message("Saving model on half epoch")
                 save_state({
                     'model_state_encoder': generator.encoder.state_dict(),
                     'model_state_decoder': generator.decoder.state_dict(),
-                }, config['experiment_path'] + "/" + "/epoch%d_2quarter_" % epoch + config['save']['save_file_generator'])
+                }, config['experiment_path'] + "/" + "/epoch%d50quarter_" % epoch + config['save']['save_file_generator'])
             # save on third quarter epoch
             if batch == int(int(num_batches / 4) * 3):
                 log_message("Saving model on half epoch")
                 save_state({
                     'model_state_encoder': generator.encoder.state_dict(),
                     'model_state_decoder': generator.decoder.state_dict(),
-                }, config['experiment_path'] + "/" + "/epoch%d_3quarter_" % epoch + config['save']['save_file_generator'])
+                }, config['experiment_path'] + "/" + "/epoch%d75quarter_" % epoch + config['save']['save_file_generator'])
 
         # save each epoch
         log_message("Saving model")
         save_state({
             'model_state_encoder': generator.encoder.state_dict(),
             'model_state_decoder': generator.decoder.state_dict(),
-        }, config['experiment_path'] + "/" + "/epoch%d_" % epoch + config['save']['save_file_generator'])
+        }, config['experiment_path'] + "/" + "/epoch%d00_" % epoch + config['save']['save_file_generator'])
         # save_state({
         #     'model': discriminator.model.state_dict()
         # }, config['experiment_path'] + "/" + "/epoch%d_" % epoch + config['save']['save_file_discriminator'])

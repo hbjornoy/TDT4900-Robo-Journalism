@@ -26,15 +26,15 @@ if __name__ == '__main__':
 
     # Parameters
     test_data = False
-    directory = "output_for_eval/seq2seq/cnn_models_first_eval/"
+    directory = sys.argv[1]
     
     # validation set
-    path_to_reference = "output_for_eval/seq2seq/split_data/reference/"
-    path_to_modelsummary = "output_for_eval/seq2seq/split_data/modelsummary/"
+    path_to_reference = '/'.join(directory.split('/')[0:-1]) + "/split_data/reference/"
+    path_to_modelsummary = '/'.join(directory.split('/')[0:-1]) + "/split_data/modelsummary/"
     #num_summaries = 2000
     num_summaries = 1010
 
-    # test set
+    # test set (LEGACY)
     if test_data:
         path_to_reference = "../for_rouge/test_data/reference/"
         path_to_modelsummary = "../for_rouge/test_data/modelsummary/"
@@ -68,6 +68,7 @@ if __name__ == '__main__':
             assert len(epoch) == 1
             epoch = int(epoch[0])
         except AssertionError as e:
+            print('Filename error: ', name_of_file)
             print('Expected a format with only one number (ex:epoch14_baseline.pth.tar_eval.log)')
             raise e
 

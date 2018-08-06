@@ -45,8 +45,8 @@
     "load_file" : "../../models/pretrained_models/classifier/cnn/epoch10_dataset_num100_cnn_classifier_sampled_folder_test5.tar"
   },
   "save" : {
-    "save_file_generator" : "cnn_generator_seqGAN_start_sr_0.80.pth.tar",
-    "save_file_discriminator" : "cnn_discriminator_seqGAN_start_sr_0.80.pth.tar"
+    "save_file_generator" : "cnn_generator_seqGAN.pth.tar",
+    "save_file_discriminator" : "cnn_discriminator_seqGAN.pth.tar"
   },
   "log" : {
     "print_every" : 10,
