@@ -11,12 +11,10 @@ min_article_tokens = 200
 max_abstract_tokens = 100
 min_abstract_tokens = 50
 
-cnn_directory = os.fsencode("../../data/cnn_clean/cnn_stories_tokenized/")
-dm_directory = os.fsencode("../../data/cnn_clean/dm_stories_tokenized/")
+exa_directory = os.fsencode("../../data/exa_clean/")
 
-relative_save_path = "../../data/cnn_preprocessed/"
-save_name = "cnn_preprocessed_400_100"
-
+relative_save_path = "../../data/exa_preprocessed/"
+save_name = "exa_preprocessed_400_100"
 
 class Errors:
     too_short_articles = 0
@@ -119,15 +117,13 @@ def save_articles(articles, abstracts, name, relative_path):
             f.write("\n")
 
 
-cnn_articles, cnn_abstracts = process_stories(cnn_directory)
-dm_articles, dm_abstracts = process_stories(dm_directory)
+print('start processing')
+exa_articles, exa_abstracts = process_stories(exa_directory)
 print("Too short articles: %d" % Errors.too_short_articles)
 print("Too short abstracts: %d" % Errors.too_short_abstracts)
-processed_articles = cnn_articles + dm_articles
-processed_abstracts = cnn_abstracts + dm_abstracts
-save_articles(processed_articles, processed_abstracts, save_name, relative_save_path)
-print("Number of saved articles: %d" % len(processed_articles))
-print("Number of saved abstracts: %d" % len(processed_abstracts))
+save_articles(exa_articles, exa_abstracts, save_name, relative_save_path)
+print("Number of saved articles: %d" % len(exa_articles))
+print("Number of saved abstracts: %d" % len(exa_abstracts))
 print("DONE")
 # cnn articles = 92579
 # daily mail articles = 219506

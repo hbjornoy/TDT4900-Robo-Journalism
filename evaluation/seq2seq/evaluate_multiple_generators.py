@@ -11,7 +11,7 @@ from models.seq2seq.decoder import *
 from models.seq2seq.encoder import *
 from preprocess.preprocess_pointer import *
 from evaluation.seq2seq.evaluate import *
-from evaluation.seq2seq.calculate_rouge_in_folder import read_directory
+#from evaluation.seq2seq.calculate_rouge_in_folder import read_directory
 
 
 def load_state(filename):
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     models_directory = sys.argv[1]
     files = list(read_directory(models_directory))
     files.sort()
-    output_directory = twolevelsup + "/" + "/".join(models_directory.split("/")[0:-1]) + "/models_first_eval"
+    output_directory = twolevelsup + "/" + "/".join(models_directory.split("/")[0:-1]) + "/models_first_eval/"
     print("Number of files to run: %d" % len(files), flush=True)
 
     for i in range(0, len(files)):

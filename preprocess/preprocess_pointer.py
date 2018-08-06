@@ -1,7 +1,14 @@
 import pickle
 import sys
+import os
 
-sys.path.append(sys.path[0]+'/../')  # ugly dirtyfix for imports to work
+from pathlib import Path
+dirname = os.path.dirname(os.path.abspath(__file__))
+p = Path(dirname)
+twolevelsup = str(p.parent.parent)
+if twolevelsup not in sys.path:
+    sys.path.append(twolevelsup)  # ugly dirtyfix for imports to work  # ugly dirtyfix for imports to work
+
 from utils.data_prep import split_category_and_article
 
 
@@ -142,35 +149,35 @@ def read_file(relative_path):
     return articles, abstracts
 
 
-if __name__ == '__main__':
-    relative_path_cnn = '../data/cnn_preprocessed/cnn_preprocessed_400_100'
-    # relative_path_cnn = '../data/ntb_preprocessed/ntb_with_numbers_80'
-    articles, abstracts = read_file(relative_path_cnn)
+# SET VARIABLES
+relative_path = '../../data/cnn_preprocessed/cnn_preprocessed_400_100'
+#relative_path = '../../data/exa_preprocessed/exa_preprocessed_400_100'
+save_path_dataset = '../../data/cnn_pickled/cnn_pointer_50k'
+#save_path_dataset = '../../data/exa_pickled/exa_pointer_numbers_50k'
 
-    with_categories = False
-    # with_categories = True
-    max_articles = -1
-    # limit = 30000
-    limit = 50000
+articles, abstracts = read_file(relative_path)
+with_categories = False
+# with_categories = True
+max_articles = -1
+# limit = 30000
+limit = 50000
 
-    vocabulary = generate_vocabulary(articles, abstracts, max_articles, with_categories)
-    limited_vocabulary = limit_vocabulary(vocabulary, limit)
+vocabulary = generate_vocabulary(articles, abstracts, max_articles, with_categories)
+limited_vocabulary = limit_vocabulary(vocabulary, limit)
 
-    summary_pairs = create_summary_pairs(articles, abstracts, limited_vocabulary, max_articles, with_categories)
-    dataset = DataSet(limited_vocabulary, summary_pairs)
+summary_pairs = create_summary_pairs(articles, abstracts, limited_vocabulary, max_articles, with_categories)
+dataset = DataSet(limited_vocabulary, summary_pairs)
 
-    # Test
-    # vocab_words = [(w, limited_vocabulary.word2count[w]) for w in limited_vocabulary.word2count.keys()]
-    # for tup in vocab_words:
-    #     print("%s - %d" % (tup[0], tup[1]), flush=True)
+# Test
+# vocab_words = [(w, limited_vocabulary.word2count[w]) for w in limited_vocabulary.word2count.keys()]
+# for tup in vocab_words:
+#     print("%s - %d" % (tup[0], tup[1]), flush=True)
 
-    # save_path_dataset = '../data/ntb_pickled/ntb_pointer_numbers_30k'
-    save_path_dataset = '../data/cnn_pickled/cnn_pointer_50k'
-    save_dataset(dataset, save_path_dataset)
+save_dataset(dataset, save_path_dataset)
 
-    print("No eos added for %d sentences" % Errors.no_eos_added)
+print("No eos added for %d sentences" % Errors.no_eos_added)
 
-    # load_path = '../data/cnn_pickled/cnn_pointer_50k'
-    # summary_pairs, vocabulary = load_dataset(load_path)
-    # print(len(summary_pairs))
-    # print(vocabulary.n_words)
+# load_path = '../data/cnn_pickled/cnn_pointer_50k'
+# summary_pairs, vocabulary = load_dataset(load_path)
+# print(len(summary_pairs))
+# print(vocabulary.n_words)
