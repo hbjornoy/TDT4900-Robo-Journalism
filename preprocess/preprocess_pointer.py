@@ -155,7 +155,7 @@ def read_file(relative_path):
 relative_path = '../../data/combined_preprocessed/combined_preprocessed_400_100'
 #save_path_dataset = '../../data/cnn_pickled/cnn_pointer_50k'
 #save_path_dataset = '../../data/exa_pickled/exa_pointer_numbers_50k'
-save_path_dataset = '../data/combined_pickled/combined_pointer_50k'
+save_path_dataset = '../../data/combined_pickled/combined_pointer_50k'
 
 articles, abstracts = read_file(relative_path)
 with_categories = False
