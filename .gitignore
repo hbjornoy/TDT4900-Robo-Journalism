@@ -1,6 +1,6 @@
 .ipynb_checkpoints
 
-data/*
+
 .idea
 saved_models/*
 *.pyc
