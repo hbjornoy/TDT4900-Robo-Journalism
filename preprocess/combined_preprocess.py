@@ -1,5 +1,8 @@
 import os
 import re
+import random
+from sklearn.utils import shuffle
+import numpy as np
 
 dm_single_close_quote = u'\u2019'  # unicode
 dm_double_close_quote = u'\u201d'  # unicode
@@ -13,10 +16,10 @@ min_abstract_tokens = 50
 
 cnn_directory = os.fsencode("../data/cnn_clean/cnn_stories_tokenized/")
 dm_directory = os.fsencode("../data/cnn_clean/dm_stories_tokenized/")
+exa_directory = os.fsencode("../data/exa_clean/")
 
-relative_save_path = "../../data/cnn_preprocessed/"
-save_name = "cnn_preprocessed_400_100"
-
+relative_save_path = "../data/combined_preprocessed/"
+save_name = "combined_preprocessed_400_100"
 
 class Errors:
     too_short_articles = 0
@@ -121,14 +124,17 @@ def save_articles(articles, abstracts, name, relative_path):
 
 cnn_articles, cnn_abstracts = process_stories(cnn_directory)
 dm_articles, dm_abstracts = process_stories(dm_directory)
+exa_articles, exa_abstracts = process_stories(exa_directory)
 print("Too short articles: %d" % Errors.too_short_articles)
 print("Too short abstracts: %d" % Errors.too_short_abstracts)
-processed_articles = cnn_articles + dm_articles
-processed_abstracts = cnn_abstracts + dm_abstracts
+processed_articles = cnn_articles + dm_articles + exa_articles
+processed_abstracts = cnn_abstracts + dm_abstracts + exa_abstracts
+
+# HB fix to have both types of media in the evaluation-part, shuffle them
+# np.random.seed(0)
+# processed_articles, processed_abstracts = shuffle(processed_articles, processed_abstracts)
+
 save_articles(processed_articles, processed_abstracts, save_name, relative_save_path)
 print("Number of saved articles: %d" % len(processed_articles))
 print("Number of saved abstracts: %d" % len(processed_abstracts))
 print("DONE")
-# cnn articles = 92579
-# daily mail articles = 219506
-# should be total = 312 085

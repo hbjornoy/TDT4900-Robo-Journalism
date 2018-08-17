@@ -29,7 +29,7 @@
   },
   "log" : {
     "print_every" : 1000,
-    "filename" : "experiments/hb_cnn_test_1/output.log"
+    "filename" : "experiments/combined_test_1/output.log"
   },
   "tensorboard" : {
     "log_path" : "../../log/seq2seq/baseline"
