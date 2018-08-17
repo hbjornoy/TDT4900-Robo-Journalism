@@ -34,7 +34,7 @@ if __name__ == '__main__':
     models_directory = sys.argv[1]
     files = list(read_directory(models_directory))
     files.sort()
-    output_directory = twolevelsup + "/" + "/".join(models_directory.split("/")[0:-1]) + "/models_first_eval/"
+    output_directory = "/".join(models_directory.split("/")[0:-1]) + "/models_first_eval/"
     print("Number of files to run: %d" % len(files), flush=True)
 
     for i in range(0, len(files)):
@@ -59,6 +59,10 @@ if __name__ == '__main__':
 
         relative_path = "../data/cnn_pickled/cnn_pointer_50k"
         # relative_path = "../../data/ntb_pickled/ntb_pointer_30k"
+        #relative_path = "../data/combined_pickled/combined_pointer_50k"
+        # relative_path = "../data/exa_pickled/exa_pointer_numbers_50k"
+
+
         hidden_size = 128
         embedding_size = 100
         n_layers = 1
@@ -67,8 +71,10 @@ if __name__ == '__main__':
         # load_file = "../../models/pretrained_models/after_gan/epoch1_cnn_generator_unk_fix_rl_metricl.pth.tar"
         #load_file = "models/pretrained_models/after_gan/epoch1_cnn_generator_GAN_test.pth.tar"
         # load_file = "../../models/pretrained_models/after_gan/ntb_generator_test_save_2.tar"
+        __ , vocabulary = load_dataset(relative_path)
+        exa_path = "../data/combined_pickled/combined_pointer_50k"
+        summary_pairs, __ = load_dataset(exa_path)
 
-        summary_pairs, vocabulary = load_dataset(relative_path)
         encoder = EncoderRNN(vocabulary.n_words, embedding_size, hidden_size, n_layers=n_layers)
 
         max_article_length = max(len(pair.article_tokens) for pair in summary_pairs) + 1
@@ -93,7 +99,8 @@ if __name__ == '__main__':
             encoder = encoder.cuda()
             decoder = decoder.cuda()
 
-        summary_pairs = summary_pairs[-13000:-11990]
+        # evaluate on 300 CNN/DM and 100 Exa
+        summary_pairs = summary_pairs[160800:161300] + summary_pairs[-13000:-12800] #-11990
         logger.info("Evaluating %d examples" % len(summary_pairs))
 
         config = {}

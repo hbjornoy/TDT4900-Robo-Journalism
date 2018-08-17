@@ -84,6 +84,12 @@ if __name__ == '__main__':
     load_file = experiment_path + "/" + config['train']['load_file']
     summary_pairs, vocabulary = load_dataset('/'.join(relative_path.split('/')[1:]))
 
+    # HB: make sure the generator does not train with test samples
+    if len(summary_pairs) == 255157: # only for this spesific dataset combination
+        print('The dataset is combined, so remove the 13 000 cnn/dm testsamples...')
+        del summary_pairs[160768:173802]
+        
+
     if num_articles != -1:
         summary_pairs = summary_pairs[:num_articles]
 
@@ -106,7 +112,7 @@ if __name__ == '__main__':
 
     log_message("Range test: %d - %d" % (train_length, train_length+test_length))
 
-    # HB: reducing size of datasets for testing
+    # HB: reducing size of datasets for testing, it is possible to have a third argv like 0.1 is using only a tenth of the data
     import math
     if len(sys.argv) > 3:
         keep_ratio = float(sys.argv[3])

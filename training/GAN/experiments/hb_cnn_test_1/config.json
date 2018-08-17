@@ -15,7 +15,6 @@
     "n_discriminator" : 4,
     "discriminator_n_epochs" : 1,
     "discriminator_fake_data_sample_rate" : 1.00,
-    "naive_roll_out_strategy" : true,
     "num_monte_carlo_samples" : 4,
     "max_sample_length" : 99,
     "sample_rate" : 0.80,

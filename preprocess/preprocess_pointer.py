@@ -5,9 +5,9 @@ import os
 from pathlib import Path
 dirname = os.path.dirname(os.path.abspath(__file__))
 p = Path(dirname)
-twolevelsup = str(p.parent.parent)
-if twolevelsup not in sys.path:
-    sys.path.append(twolevelsup)  # ugly dirtyfix for imports to work  # ugly dirtyfix for imports to work
+onelevelsup = str(p.parent.parent)
+if onelevelsup not in sys.path:
+    sys.path.append(onelevelsup)  # ugly dirtyfix for imports to work  # ugly dirtyfix for imports to work
 
 from utils.data_prep import split_category_and_article
 
@@ -142,18 +142,20 @@ def load_dataset(path):
 
 def read_file(relative_path):
     print("Reading lines...")
-    articles = open(relative_path + '.article.txt', encoding='utf-8').read().strip().split('\n')
-    abstracts = open(relative_path + '.abstract.txt', encoding='utf-8').read().strip().split('\n')
+    articles = open('/'.join(relative_path.split('/')[1:]) + '.article.txt', encoding='utf-8').read().strip().split('\n')
+    abstracts = open('/'.join(relative_path.split('/')[1:]) + '.abstract.txt', encoding='utf-8').read().strip().split('\n')
     print("Read %s articles" % len(articles))
     print("Read %s abstracts" % len(abstracts))
     return articles, abstracts
 
 
 # SET VARIABLES
-relative_path = '../../data/cnn_preprocessed/cnn_preprocessed_400_100'
+#relative_path = '../../data/cnn_preprocessed/cnn_preprocessed_400_100'
 #relative_path = '../../data/exa_preprocessed/exa_preprocessed_400_100'
-save_path_dataset = '../../data/cnn_pickled/cnn_pointer_50k'
+relative_path = '../../data/combined_preprocessed/combined_preprocessed_400_100'
+#save_path_dataset = '../../data/cnn_pickled/cnn_pointer_50k'
 #save_path_dataset = '../../data/exa_pickled/exa_pointer_numbers_50k'
+save_path_dataset = '../data/combined_pickled/combined_pointer_50k'
 
 articles, abstracts = read_file(relative_path)
 with_categories = False
