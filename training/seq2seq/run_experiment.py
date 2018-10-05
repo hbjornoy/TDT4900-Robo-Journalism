@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     load_model = config['train']['load']
     load_file = experiment_path + "/" + config['train']['load_file']
-    summary_pairs, vocabulary = load_dataset('/'.join(relative_path.split('/')[1:]))
+    summary_pairs, vocabulary = load_dataset('/'.join(relative_path.split('/')[2:]))
 
     # HB: make sure the generator does not train with test samples
     if len(summary_pairs) == 255157: # only for this spesific dataset combination
