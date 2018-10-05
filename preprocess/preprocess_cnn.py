@@ -14,7 +14,7 @@ min_abstract_tokens = 50
 cnn_directory = os.fsencode("data/cnn_clean/cnn_stories_tokenized/")
 dm_directory = os.fsencode("data/cnn_clean/dm_stories_tokenized/")
 
-relative_save_path = "../data/cnn_preprocessed/"
+relative_save_path = "data/cnn_preprocessed/"
 save_name = "cnn_preprocessed_400_100"
 
 
@@ -109,11 +109,11 @@ def fix_missing_period(line):
 
 
 def save_articles(articles, abstracts, name, relative_path):
-    with open(relative_path + name + '.article.txt', 'w') as f:
+    with open(relative_path + name + '.article.txt', 'w+') as f:
         for item in articles:
             f.write(item)
             f.write("\n")
-    with open(relative_path + name + '.abstract.txt', 'w') as f:
+    with open(relative_path + name + '.abstract.txt', 'w+') as f:
         for item in abstracts:
             f.write(item)
             f.write("\n")

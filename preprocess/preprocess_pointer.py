@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 dirname = os.path.dirname(os.path.abspath(__file__))
 p = Path(dirname)
-onelevelsup = str(p.parent.parent)
+onelevelsup = str(p.parent)
 if onelevelsup not in sys.path:
     sys.path.append(onelevelsup)  # ugly dirtyfix for imports to work  # ugly dirtyfix for imports to work
 
@@ -150,12 +150,12 @@ def read_file(relative_path):
 
 
 # SET VARIABLES
-#relative_path = '../../data/cnn_preprocessed/cnn_preprocessed_400_100'
+relative_path = '../data/cnn_preprocessed/cnn_preprocessed_400_100'
 #relative_path = '../../data/exa_preprocessed/exa_preprocessed_400_100'
-relative_path = '../../data/combined_preprocessed/combined_preprocessed_400_100'
-#save_path_dataset = '../../data/cnn_pickled/cnn_pointer_50k'
+#relative_path = '../../data/combined_preprocessed/combined_preprocessed_400_100'
+save_path_dataset = 'data/cnn_pickled/cnn_pointer_50k'
 #save_path_dataset = '../../data/exa_pickled/exa_pointer_numbers_50k'
-save_path_dataset = '../../data/combined_pickled/combined_pointer_50k'
+#save_path_dataset = '../../data/combined_pickled/combined_pointer_50k'
 
 articles, abstracts = read_file(relative_path)
 with_categories = False
