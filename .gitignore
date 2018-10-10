@@ -1,12 +1,13 @@
 .ipynb_checkpoints
 
+.DS_Store
 
 .idea
 saved_models/*
 *.pyc
 *.tar
 *.txt
-*.log
+#*.log
 log/*
 
 # ignore folders
