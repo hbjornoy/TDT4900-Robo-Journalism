@@ -1,5 +1,6 @@
 import sys
 import os
+import math
 
 from torch.distributions import Categorical
 
@@ -18,8 +19,13 @@ from utils.batching import *
 
 def load_state(filename):
     if os.path.isfile(filename):
-        state = torch.load(filename)
-        return state['model_state_encoder'], state['model_state_decoder']
+        try:
+            state = torch.load(filename)
+            return state['model_state_encoder'], state['model_state_decoder']
+        except AttributeError:
+            # if you load the model on a machine without cuda you have to define map_location
+            state = torch.load(filename, map_location='cpu')
+            return state['model_state_encoder'], state['model_state_decoder']
     else:
         raise FileNotFoundError
 
@@ -145,7 +151,7 @@ if __name__ == '__main__':
 
     # load saved models
     print("Loading models", flush=True)
-    load_file = "models/pretrained_models/cnn/epoch13_cnn_test1.pth.tar"
+    load_file = "models/pretrained_models/cnn/epoch13_baseline.pth.tar"
     try:
         model_state_encoder, model_state_decoder = load_state(load_file)
         encoder.load_state_dict(model_state_encoder)
@@ -181,7 +187,6 @@ if __name__ == '__main__':
     sample_pairs = summary_pairs[:generate_articles_length]
 
     # HB: reducing size of datasets for testing
-    import math
     if len(sys.argv) > 2:
         keep_ratio = float(sys.argv[2])
         sample_pairs = sample_pairs[0:math.ceil(len(sample_pairs)*keep_ratio)]

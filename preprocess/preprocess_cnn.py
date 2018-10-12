@@ -11,10 +11,10 @@ min_article_tokens = 200
 max_abstract_tokens = 100
 min_abstract_tokens = 50
 
-cnn_directory = os.fsencode("data/cnn_clean/cnn_stories_tokenized/")
-dm_directory = os.fsencode("data/cnn_clean/dm_stories_tokenized/")
+cnn_directory = os.fsencode("../data/cnn_clean/cnn_stories_tokenized/") 
+dm_directory = os.fsencode("../data/cnn_clean/dm_stories_tokenized/")   
 
-relative_save_path = "data/cnn_preprocessed/"
+relative_save_path = "../../data/cnn_preprocessed/" 
 save_name = "cnn_preprocessed_400_100"
 
 
