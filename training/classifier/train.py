@@ -134,6 +134,10 @@ def batch_sequences(vocabulary, titles, ground_truth):
     sequences = []
     batch_size = len(titles)
     for i in range(batch_size):
+        print("titles", titles[i])
+        for word in titles[i].split(' '):
+                print("word:", word)
+                print("vocab:", vocabulary.word2index[word])
         sequence = indexes_from_sentence_no_eos(vocabulary, titles[i])
         sequences.append(sequence)
 
